@@ -118,11 +118,14 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Test weekday grouping
         """
         data = utils.get_data()
-
         weekdays = utils.group_by_weekday(data[10])
-
-        self.assertItemsEqual(weekdays.keys(), [0, 1, 2, 3, 4, 5, 6])
-        self.assertEqual(weekdays[1][0], 30047)
+        self.assertItemsEqual(weekdays.keys(), range(7))
+        self.assertDictEqual(weekdays, {0: [], 1: [30047],
+                             2: [24465], 3: [23705], 4: [], 5: [], 6: []})
+        weekdays = utils.group_by_weekday(data[11])
+        self.assertDictEqual(weekdays, {0: [24123], 1: [16564],
+                             2: [25321], 3: [22969, 22999], 4: [6426],
+                             5: [], 6: []})
 
     def test_seconds_since_midnight(self):
         """
@@ -130,6 +133,10 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         self.assertEqual(utils.seconds_since_midnight(
             datetime.time(12, 45, 11)), 45911)
+        self.assertEqual(utils.seconds_since_midnight(
+            datetime.time(0, 0, 1)), 1)
+        self.assertEqual(utils.seconds_since_midnight(
+            datetime.time(15, 5, 19)), 54319)
 
     def test_interval(self):
         """
@@ -139,6 +146,12 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             datetime.time(12, 0, 0), datetime.time(13, 0, 0)), 3600)
         self.assertEqual(utils.interval(
             datetime.time(13, 0, 0), datetime.time(12, 30, 0)), -1800)
+        self.assertEqual(utils.interval(
+            datetime.time(4, 4, 4), datetime.time(1, 30, 0)), -9244)
+        self.assertEqual(utils.interval(
+            datetime.time(0, 0, 0), datetime.time(23, 59, 59)), 86399)
+        self.assertEqual(utils.interval(
+            datetime.time(0, 0, 0), datetime.time(0, 0, 0)), 0)
 
     def test_mean(self):
         """
@@ -146,6 +159,8 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         self.assertEqual(utils.mean([1, 2, 3, 4, 5, 6, 7]), 4)
         self.assertEqual(utils.mean([30.3, 70.2, 1]), 33.833333333333336)
+        self.assertEqual(utils.mean([460, 123, 33.33333]), 205.44444333333334)
+        self.assertAlmostEqual(utils.mean([0.1, 0.2, 0.3]), 0.2, 7)
 
 
 def suite():
