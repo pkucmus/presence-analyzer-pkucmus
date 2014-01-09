@@ -62,11 +62,16 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)
         self.assertEqual(len(data), 8)
-        self.assertItemsEqual(data, [[u'Weekday', u'Presence (s)'],
-                              [u'Mon', 0], [u'Tue', 30047],
-                              [u'Wed', 24465], [u'Thu', 23705],
-                              [u'Fri', 0], [u'Sat', 0],
-                              [u'Sun', 0]])
+        self.assertItemsEqual(data, [
+            [u'Weekday', u'Presence (s)'],
+            [u'Mon', 0],
+            [u'Tue', 30047],
+            [u'Wed', 24465],
+            [u'Thu', 23705],
+            [u'Fri', 0],
+            [u'Sat', 0],
+            [u'Sun', 0],
+        ])
 
     def test_api_presence_meantime(self):
         """
@@ -77,10 +82,15 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)
         self.assertEqual(len(data), 7)
-        self.assertItemsEqual(data, [[u'Mon', 24123.0],
-                              [u'Tue', 16564.0], [u'Wed', 25321.0],
-                              [u'Thu', 22984.0], [u'Fri', 6426.0],
-                              [u'Sat', 0], [u'Sun', 0]])
+        self.assertItemsEqual(data, [
+            [u'Mon', 24123.0],
+            [u'Tue', 16564.0],
+            [u'Wed', 25321.0],
+            [u'Thu', 22984.0],
+            [u'Fri', 6426.0],
+            [u'Sat', 0],
+            [u'Sun', 0],
+        ])
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
