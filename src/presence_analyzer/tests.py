@@ -53,6 +53,25 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_api_presence_start_end(self):
+        """
+        Test user weekday presence start end
+        """
+        resp = self.client.get('/api/v1/presence_start_end/11')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 7)
+        self.assertItemsEqual(data, [
+            [u'Mon', 33134, 57257],
+            [u'Tue', 33590, 50154],
+            [u'Wed', 33206, 58527],
+            [u'Thu', 35602, 58586],
+            [u'Fri', 47816, 54242],
+            [u'Sat', 0, 0],
+            [u'Sun', 0, 0],
+        ])
+
     def test_api_presence_weekday(self):
         """
         Test user presence grouped by weekday api
@@ -148,6 +167,23 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             4: [6426],
             5: [],
             6: []
+        })
+
+    def test_group_start_end_weekday(self):
+        """
+        Test weekday grouping start end
+        """
+        data = utils.get_data()
+        weekdays = utils.group_by_weekday_start_end(data[11])
+        self.assertItemsEqual(weekdays.keys(), range(7))
+        self.assertSequenceEqual(weekdays, {
+            0: {'starts': [33134], 'ends': [57257]},
+            1: {'starts': [33590], 'ends': [50154]},
+            2: {'starts': [33206], 'ends': [58527]},
+            3: {'starts': [37116, 34088], 'ends': [60085, 57087]},
+            4: {'starts': [47816], 'ends': [54242]},
+            5: {'starts': [], 'ends': []},
+            6: {'starts': [], 'ends': []},
         })
 
     def test_seconds_since_midnight(self):
