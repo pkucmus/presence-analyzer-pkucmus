@@ -42,36 +42,25 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 302)
         assert resp.headers['Location'].endswith('/presence_weekday')
 
-    def test_presence_start_end_view_rendering(self):
+    def test_templateview_rendering(self):
         """
-        Test presence start/end page rendering.
+        Test page rendering with url given template name.
         """
         resp = self.client.get('/presence_start_end')
         self.assertEqual(resp.status_code, 200)
-        assert "Presence start-end weekday" in resp.data
-
+        self.assertIn("Presence start-end weekday", resp.data)
         resp = self.client.post('/presence_start_end')
         self.assertEqual(resp.status_code, 405)
 
-    def test_mean_time_weekday_view_rendering(self):
-        """
-        Test mean time by weekday page rendering.
-        """
         resp = self.client.get('/mean_time_weekday')
         self.assertEqual(resp.status_code, 200)
-        assert "Presence mean time by weekday" in resp.data
-
+        self.assertIn("Presence mean time by weekday", resp.data)
         resp = self.client.post('/mean_time_weekday')
         self.assertEqual(resp.status_code, 405)
 
-    def test_presence_weekday_view_rendering(self):
-        """
-        Test presence by weekday page rendering.
-        """
         resp = self.client.get('/presence_weekday')
         self.assertEqual(resp.status_code, 200)
-        assert "Presence by weekday" in resp.data
-
+        self.assertIn("Presence by weekday", resp.data)
         resp = self.client.post('/presence_weekday')
         self.assertEqual(resp.status_code, 405)
 

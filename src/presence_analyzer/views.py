@@ -19,31 +19,15 @@ def mainpage():
     """
     Redirects to front page.
     """
-    return redirect(url_for('presence_weekday_templateview'))
+    return redirect(url_for('templateview', template_name='presence_weekday'))
 
 
-@app.route('/presence_start_end', methods=['GET'])
-def presence_start_end_templateview():
+@app.route('/<string:template_name>', methods=['GET'])
+def templateview(template_name):
     """
-    Renders and response presence start/end page.
+    Renders and response page by template name from url.
     """
-    return render_template('presence_start_end.html')
-
-
-@app.route('/mean_time_weekday', methods=['GET'])
-def mean_time_weekday_templateview():
-    """
-    Renders and response mean time weekdey page.
-    """
-    return render_template('mean_time_weekday.html')
-
-
-@app.route('/presence_weekday', methods=['GET'])
-def presence_weekday_templateview():
-    """
-    Renders and response presence by weekday page.
-    """
-    return render_template('presence_weekday.html')
+    return render_template(template_name+'.html')
 
 
 @app.route('/api/v1/users', methods=['GET'])
@@ -57,9 +41,10 @@ def users_view():
             for i in data.keys()]
 
 
+@app.route('/api/v1/presence_start_end/', methods=['GET'])
 @app.route('/api/v1/presence_start_end/<int:user_id>', methods=['GET'])
 @jsonify
-def presence_start_end_view(user_id):
+def presence_start_end_view(user_id=None):
     """
     Returns start and end time of given user grouped by weekday.
     """
@@ -81,9 +66,10 @@ def presence_start_end_view(user_id):
     return result
 
 
+@app.route('/api/v1/mean_time_weekday/', methods=['GET'])
 @app.route('/api/v1/mean_time_weekday/<int:user_id>', methods=['GET'])
 @jsonify
-def mean_time_weekday_view(user_id):
+def mean_time_weekday_view(user_id=None):
     """
     Returns mean presence time of given user grouped by weekday.
     """
@@ -99,9 +85,10 @@ def mean_time_weekday_view(user_id):
     return result
 
 
+@app.route('/api/v1/presence_weekday/', methods=['GET'])
 @app.route('/api/v1/presence_weekday/<int:user_id>', methods=['GET'])
 @jsonify
-def presence_weekday_view(user_id):
+def presence_weekday_view(user_id=None):
     """
     Returns total presence time of given user grouped by weekday.
     """
