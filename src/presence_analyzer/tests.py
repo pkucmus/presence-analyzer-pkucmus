@@ -64,6 +64,9 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         resp = self.client.post('/presence_weekday')
         self.assertEqual(resp.status_code, 405)
 
+        resp = self.client.get('/not_existing_page')
+        self.assertEqual(resp.status_code, 404)
+
     def test_api_users(self):
         """
         Test users listing.

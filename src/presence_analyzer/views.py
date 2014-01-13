@@ -5,7 +5,7 @@ Defines views.
 
 import calendar
 from flask import redirect, render_template, url_for
-
+from jinja2.exceptions import TemplateNotFound
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
     group_by_weekday, group_by_weekday_start_end
@@ -27,7 +27,10 @@ def templateview(template_name):
     """
     Renders and response page by template name from url.
     """
-    return render_template(template_name+'.html')
+    try:
+        return render_template(template_name+'.html')
+    except TemplateNotFound:
+        return 'This page does not exist', 404
 
 
 @app.route('/api/v1/users', methods=['GET'])
