@@ -27,7 +27,7 @@
                 (url_for('templateview', template_name='mean_time_weekday'), 'mean_time_weekday', 'Presence mean time'),
                 (url_for('templateview', template_name='presence_start_end'), 'presence_start_end', 'Presence start-end')
             ] -%}
-            {% set active_page = active_page|default('presence_weekday') -%}
+            {% set active_page = active_page|default('index') -%}
             <ul>
                 {% for href, id, caption in navigation_bar %}
                 <li {% if id == active_page %}id="selected"{% endif %}>
@@ -37,6 +37,12 @@
             </ul>
         </div>
         {% block content %}
+        <div id="content">
+            <h2>Welcome in presence analyzer</h2>
+            <p>
+                Choose a report from above tabs.
+            </p>
+        </div>
         {% endblock %}
     </div>
 </body>
