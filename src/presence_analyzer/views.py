@@ -14,7 +14,7 @@ from presence_analyzer.utils import jsonify, get_data, mean, \
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
-mako = MakoTemplates(app)
+MAKO = MakoTemplates(app)
 
 
 def mainpage():

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <intranet>
     <server>
-        <host>intranet.stxnext.psl</host>
+        <host>intranet.stxnext.pl</host>
         <port>443</port>
         <protocol>https</protocol>
     </server>

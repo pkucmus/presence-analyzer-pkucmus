@@ -28,9 +28,24 @@ def jsonify(function):
                         mimetype='application/json')
     return inner
 
+
+def refresh_xml():
+    """
+    Download user XML data file from sargo server and save it as
+    current config file.
+    """
+    req = urllib2.urlopen('http://sargo.bolt.stxnext.pl/users.xml')
+    with open(app.config['USER_DATA_XML'], 'wb') as xmlfile:
+        while True:
+            chunk = req.read(16 * 1024)
+            if not chunk:
+                break
+            xmlfile.write(chunk)
+
+
 def get_user_data():
     """
-    Extracts user data from file specified in config. 
+    Extracts user data from file specified in config.
     """
     data = {}
     with open(app.config['USER_DATA_XML'], 'r') as xmlfile:
@@ -39,12 +54,13 @@ def get_user_data():
         users = root[1]
         data = {
             int(user.attrib['id']): {
-                u'name': unicode(user.findtext('name')), 
+                u'name': unicode(user.findtext('name')),
                 u'avatar': unicode(user.findtext('avatar'))
-            } 
+            }
             for user in users
         }
     return data
+
 
 def get_data():
     """
