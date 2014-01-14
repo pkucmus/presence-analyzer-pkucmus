@@ -4,8 +4,9 @@ Defines views.
 """
 
 import calendar
-from flask import redirect, render_template, url_for, make_response
-from jinja2.exceptions import TemplateNotFound
+from flask import redirect, url_for, make_response
+from flask.ext.mako import MakoTemplates, render_template
+from mako.exceptions import TopLevelLookupException
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
     group_by_weekday, group_by_weekday_start_end
@@ -13,6 +14,7 @@ from presence_analyzer.utils import jsonify, get_data, mean, \
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
+mako = MakoTemplates(app)
 
 def mainpage():
     """
@@ -29,7 +31,7 @@ def templateview(template_name='site_base'):
     """
     try:
         return render_template(template_name+'.html')
-    except TemplateNotFound:
+    except TopLevelLookupException:
         return make_response('This page does not exist', 404)
 
 
