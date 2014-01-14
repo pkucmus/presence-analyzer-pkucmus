@@ -39,8 +39,33 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         Test main page redirect.
         """
         resp = self.client.get('/')
-        self.assertEqual(resp.status_code, 302)
-        assert resp.headers['Location'].endswith('/presence_weekday.html')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Welcome in presence analyzer", resp.data)
+
+    def test_templateview_rendering(self):
+        """
+        Test page rendering with url given template name.
+        """
+        resp = self.client.get('/presence_start_end')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Presence start-end weekday", resp.data)
+        resp = self.client.post('/presence_start_end')
+        self.assertEqual(resp.status_code, 405)
+
+        resp = self.client.get('/mean_time_weekday')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Presence mean time by weekday", resp.data)
+        resp = self.client.post('/mean_time_weekday')
+        self.assertEqual(resp.status_code, 405)
+
+        resp = self.client.get('/presence_weekday')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Presence by weekday", resp.data)
+        resp = self.client.post('/presence_weekday')
+        self.assertEqual(resp.status_code, 405)
+
+        resp = self.client.get('/not_existing_page')
+        self.assertEqual(resp.status_code, 404)
 
     def test_api_users(self):
         """
