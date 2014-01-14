@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
 mako = MakoTemplates(app)
 
+
 def mainpage():
     """
     Redirects to front page.
