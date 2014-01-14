@@ -127,4 +127,13 @@ def run():
         """Stop the application."""
         _serve('stop', dry_run=dry_run)
 
+    def retrive_xml():
+        req = urllib2.urlopen('http://sargo.bolt.stxnext.pl/users.xml')
+        CHUNK = 16 * 1024
+        with open(app.config['USER_DATA_XML'], 'wb') as fp:
+            while True:
+                chunk = req.read(CHUNK)
+                if not chunk: break
+                fp.write(chunk)
+
     werkzeug.script.run()
