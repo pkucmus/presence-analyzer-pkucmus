@@ -5,6 +5,8 @@ Helper functions used in views.
 
 import csv
 import urllib2
+import time
+import threading
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -17,6 +19,37 @@ from presence_analyzer.main import app
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
+_cache = {}
+_timestamps = {}
+
+def memorize(key, period):
+    """
+    Memorizing decorator. Returning cached data
+    if its validity period is not expired
+    """
+    def _decoration_wrapper(func):
+        def _caching_wrapper(*args, **kwargs):
+            cache_key = key
+            now = time.time()
+
+            if _timestamps.get(cache_key, now) > now:
+                return _cache[cache_key]
+
+            ret = func(*args, **kwargs)
+            _cache[cache_key] = ret
+            _timestamps[cache_key] = now + period
+            return ret
+        return _caching_wrapper
+    return _decoration_wrapper
+
+lock = threading.Lock()
+
+def locker(func):
+    def _lock_wrapper(*args, **kwargs):
+        lock.acquire()
+        func(*args, **kwargs)
+        lock.release()
+    return _lock_wrapper
 
 def jsonify(function):
     """
@@ -60,7 +93,6 @@ def get_server_url():
         }
     return "%(protocol)s://%(host)s:%(port)s" % data
 
-
 def get_user_data():
     """
     Extracts user data from file specified in config.
@@ -80,6 +112,7 @@ def get_user_data():
     return data
 
 
+@memorize('get_data', 30)
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.
