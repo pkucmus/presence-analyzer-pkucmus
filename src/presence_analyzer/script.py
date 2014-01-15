@@ -67,6 +67,7 @@ def make_xml(debug=True):
     app.config.from_pyfile(abspath(config))
     app.debug = debug
     presence_analyzer.utils.refresh_xml()
+    print "done"
 
 
 def _init_db(debug=False, dry_run=False):

@@ -34,7 +34,7 @@ def refresh_xml():
     Download user XML data file from sargo server and save it as
     current config file.
     """
-    req = urllib2.urlopen('http://sargo.bolt.stxnext.pl/users.xml')
+    req = urllib2.urlopen(app.config['XML_URL'])
     with open(app.config['USER_DATA_XML'], 'wb') as xmlfile:
         while True:
             chunk = req.read(16 * 1024)
