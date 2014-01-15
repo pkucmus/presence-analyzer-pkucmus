@@ -53,7 +53,7 @@ def users_view():
     """
     data = get_data()
     return [{'user_id': i, 'name': 'User {0}'.format(str(i))}
-            for i in data.keys()]
+            for i in data]
 
 
 @app.route('/api/v1/presence_start_end/', methods=['GET'])
