@@ -9,8 +9,7 @@ from flask.ext.mako import MakoTemplates, render_template
 from mako.exceptions import TopLevelLookupException
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
-    group_by_weekday, group_by_weekday_start_end, get_user_data, \
-    get_server_url
+    group_by_weekday, group_by_weekday_start_end, get_user_data
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
@@ -32,7 +31,7 @@ def templateview(template_name='site_base'):
     Renders and response page by template name from url.
     """
     try:
-        return render_template(template_name+'.html', server=get_server_url())
+        return render_template(template_name+'.html')
     except TopLevelLookupException:
         return make_response('This page does not exist', 404)
 
