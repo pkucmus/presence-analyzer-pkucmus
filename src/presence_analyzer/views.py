@@ -36,13 +36,24 @@ def templateview(template_name='site_base'):
         return make_response('This page does not exist', 404)
 
 
+@app.route('/api/v2/users', methods=['GET'])
+@jsonify
+def users_api2_view():
+    """
+    Users listing for dropdown new api.
+    """
+    return get_user_data()
+
+
 @app.route('/api/v1/users', methods=['GET'])
 @jsonify
 def users_view():
     """
     Users listing for dropdown.
     """
-    return get_user_data()
+    data = get_data()
+    return [{'user_id': i, 'name': 'User {0}'.format(str(i))}
+            for i in data.keys()]
 
 
 @app.route('/api/v1/presence_start_end/', methods=['GET'])

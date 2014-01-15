@@ -28,7 +28,7 @@
         $(document).ready(function(){
             var loading = $('#loading');
             var users = [];
-            $.getJSON("${ url_for('users_view') }", function(result) {
+            $.getJSON("${ url_for('users_api2_view') }", function(result) {
                 var dropdown = $("#user_id");
                 users = result;
                 $.each(result, function(id, user) {
