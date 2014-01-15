@@ -43,6 +43,24 @@ def refresh_xml():
             xmlfile.write(chunk)
 
 
+def get_server_url():
+    """
+    Extracts server data from given in config xml file
+    and returns it as an url.
+    """
+    data = {}
+    with open(app.config['USER_DATA_XML'], 'r') as xmlfile:
+        tree = etree.parse(xmlfile)
+        root = tree.getroot()
+        config = root[0]
+        data = {
+            u'host': unicode(config.findtext('host')),
+            u'port': unicode(config.findtext('port')),
+            u'protocol': unicode(config.findtext('protocol')),
+        }
+    return "%(protocol)s://%(host)s:%(port)s" % data
+
+
 def get_user_data():
     """
     Extracts user data from file specified in config.

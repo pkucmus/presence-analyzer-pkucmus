@@ -177,6 +177,13 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         pass
 
+    def test_get_server_url(self):
+        """
+        Test parsing of XML file for server data.
+        """
+        data = utils.get_server_url()
+        self.assertEqual(data, u'https://intranet.stxnext.pl:443')
+
     def test_get_user_data(self):
         """
         Test parsing of user XML file.

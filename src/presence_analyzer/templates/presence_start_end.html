@@ -29,6 +29,7 @@
         $(document).ready(function(){
             var loading = $('#loading');
             var users = [];
+            var image_server_url = "${server}";
             $.getJSON("${ url_for('users_api2_view') }", function(result) {
                 var dropdown = $("#user_id");
                 users = result;
@@ -42,7 +43,7 @@
                 var selected_user = $("#user_id").val();
                 var chart_div = $('#chart_div');
                 if(selected_user) {
-                    $('img.user_avatar').attr('src', "http://intranet.stxnext.pl"+users[selected_user].avatar).show();
+                    $('img.user_avatar').attr('src', image_server_url+users[selected_user].avatar).show();
                     loading.show();
                     chart_div.hide();
                     $.getJSON("${ url_for('presence_start_end_view') }"+selected_user, function(result) {
