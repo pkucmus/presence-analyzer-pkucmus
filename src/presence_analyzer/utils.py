@@ -19,8 +19,9 @@ from presence_analyzer.main import app
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
-_cache = {}
-_timestamps = {}
+CACHE = {}
+TIMESTAMPS = {}
+
 
 def memorize(key, period):
     """
@@ -32,24 +33,30 @@ def memorize(key, period):
             cache_key = key
             now = time.time()
 
-            if _timestamps.get(cache_key, now) > now:
-                return _cache[cache_key]
+            if TIMESTAMPS.get(cache_key, now) > now:
+                return CACHE[cache_key]
 
             ret = func(*args, **kwargs)
-            _cache[cache_key] = ret
-            _timestamps[cache_key] = now + period
+            CACHE[cache_key] = ret
+            TIMESTAMPS[cache_key] = now + period
             return ret
         return _caching_wrapper
     return _decoration_wrapper
 
-lock = threading.Lock()
+LOCK = threading.Lock()
+
 
 def locker(func):
+    """
+    Global thread locking decorator.
+    """
     def _lock_wrapper(*args, **kwargs):
-        lock.acquire()
-        func(*args, **kwargs)
-        lock.release()
+        LOCK.acquire()
+        ret = func(*args, **kwargs)
+        LOCK.release()
+        return ret
     return _lock_wrapper
+
 
 def jsonify(function):
     """
@@ -93,6 +100,7 @@ def get_server_url():
         }
     return "%(protocol)s://%(host)s:%(port)s" % data
 
+
 def get_user_data():
     """
     Extracts user data from file specified in config.
@@ -112,6 +120,7 @@ def get_user_data():
     return data
 
 
+@locker
 @memorize('get_data', 30)
 def get_data():
     """
