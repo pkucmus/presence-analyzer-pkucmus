@@ -28,11 +28,12 @@
         $(document).ready(function(){
             var loading = $('#loading');
             var users = [];
-            var image_server_url = "${server}";
+            var image_server_url;
             $.getJSON("${ url_for('users_api2_view') }", function(result) {
                 var dropdown = $("#user_id");
-                users = result;
-                $.each(result, function(id, user) {
+                users = result.users;
+                image_server_url = result.server;
+                $.each(users, function(id, user) {
                     dropdown.append($("<option />").val(id).text(user.name));
                 });
                 dropdown.show();

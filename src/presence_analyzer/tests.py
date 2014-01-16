@@ -94,7 +94,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         resp = self.client.get('/api/v2/users')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
-        data = json.loads(resp.data)
+        data = json.loads(resp.data)['users']
         self.assertEqual(len(data), 3)
         self.assertDictEqual(data['141'], {
             u'name': u'Adam P.',
@@ -180,24 +180,19 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         pass
 
-    def test_get_server_url(self):
-        """
-        Test parsing of XML file for server data.
-        """
-        data = utils.get_server_url()
-        self.assertEqual(data, u'https://intranet.stxnext.pl:443')
-
     def test_get_user_data(self):
         """
         Test parsing of user XML file.
         """
         data = utils.get_user_data()
         self.assertIsInstance(data, dict)
-        self.assertItemsEqual(data.keys(), [176, 170, 141])
-        self.assertDictEqual(data[176], {
+        self.assertItemsEqual(data.keys(), ['users', 'server'])
+        self.assertItemsEqual(data['users'].keys(), [176, 170, 141])
+        self.assertDictEqual(data['users'][176], {
             u'name': u'Adrian K.',
             u'avatar': u'/api/images/users/176'
         })
+        self.assertEqual(data['server'], u'https://intranet.stxnext.pl:443')
 
     def test_get_data_caching(self):
         """
