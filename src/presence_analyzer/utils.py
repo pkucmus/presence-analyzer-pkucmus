@@ -106,7 +106,7 @@ def get_user_data():
             {
                 u'id': int(user.attrib['id']),
                 u'name': unicode(user.findtext('name')),
-                u'avatar': unicode(user.findtext('avatar')),
+                u'avatar': unicode(user.findtext('avatar'))
             }
             for user in sorted(
                 users,

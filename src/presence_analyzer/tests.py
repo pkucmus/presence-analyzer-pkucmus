@@ -96,12 +96,12 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(resp.content_type, 'application/json')
         data = json.loads(resp.data)['users']
         self.assertEqual(len(data), 3)
-        self.assertDictEqual(data[0], {
+        self.assertDictEqual(data[2], {
             u'id': 141,
             u'name': u'Adam P.',
             u'avatar': u'/api/images/users/141'
         })
-
+        
     def test_api_presence_start_end(self):
         """
         Test user weekday presence start end
@@ -188,8 +188,8 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         data = utils.get_user_data()
         self.assertIsInstance(data, dict)
         self.assertItemsEqual(data.keys(), ['users', 'server'])
-        self.assertDictEqual(data['users'][1], {
-            u'id': 176,
+        self.assertItemsEqual(data['users'].keys(), [176, 170, 141])
+        self.assertDictEqual(data['users'][176], {
             u'name': u'Adrian K.',
             u'avatar': u'/api/images/users/176'
         })
