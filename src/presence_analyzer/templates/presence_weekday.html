@@ -41,7 +41,7 @@
 				users = result.users;
 				image_server_url = result.server;
 				$.each(users, function(id, user) {
-					dropdown.append($("<option />").val(id).text(user.name));
+					dropdown.append($("<option />").val(user.id).text(user.name));
 				});
 				dropdown.show();
 				loading.hide();
@@ -49,8 +49,11 @@
 			$('#user_id').change(function() {
 				var selected_user = $("#user_id").val();
 				var chart_div = $('#chart_div');
+				var user = $.grep(users, function(item){
+				return item.id == selected_user;
+				})[0];
 				if (selected_user) {
-					$('img.user_avatar').attr('src', image_server_url + users[selected_user].avatar).show();
+					$('img.user_avatar').attr('src', image_server_url + user.avatar).show();
 					loading.show();
 					chart_div.hide();
 					$.getJSON("${ url_for('presence_weekday_view') }" + selected_user, function(result) {
