@@ -7,6 +7,7 @@ import csv
 import urllib2
 import time
 import threading
+import locale
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -100,14 +101,20 @@ def get_user_data():
         }
         data['server'] = "%(protocol)s://%(host)s:%(port)s" % server
         users = root[1]
+        locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
         data['users'] = [
             {
                 u'id': int(user.attrib['id']),
                 u'name': unicode(user.findtext('name')),
                 u'avatar': unicode(user.findtext('avatar')),
             }
-            for user in sorted(users, key=lambda user: user.findtext('name'))
+            for user in sorted(
+                users,
+                key=lambda user: user.findtext('name'),
+                cmp=locale.strcoll
+            )
         ]
+        locale.setlocale(locale.LC_ALL, (None, None))
     return data
 
 
