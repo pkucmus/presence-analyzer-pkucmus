@@ -22,6 +22,8 @@ log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 CACHE = {}
 TIMESTAMPS = {}
 
+LOCK = threading.Lock()
+
 
 def memorize(key, period):
     """
@@ -43,17 +45,14 @@ def memorize(key, period):
         return _caching_wrapper
     return _decoration_wrapper
 
-LOCK = threading.Lock()
-
 
 def locker(func):
     """
     Global thread locking decorator.
     """
     def _lock_wrapper(*args, **kwargs):
-        LOCK.acquire()
-        ret = func(*args, **kwargs)
-        LOCK.release()
+        with LOCK:
+            ret = func(*args, **kwargs)
         return ret
     return _lock_wrapper
 
