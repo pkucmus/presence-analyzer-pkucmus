@@ -13,6 +13,9 @@ from presence_analyzer import main, utils
 TEST_DATA_CSV = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data.csv'
 )
+TEST_DATA_CSV_2 = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data_2.csv'
+)
 TEST_USERS_DATA = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
@@ -191,6 +194,17 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         })
         self.assertEqual(data['server'], u'https://intranet.stxnext.pl:443')
 
+    def test_get_data_caching(self):
+        """
+        Test caching of get_data method.
+        """
+        data = utils.get_data()
+        main.app.config.update({
+            'DATA_CSV': TEST_DATA_CSV_2,
+        })
+        data_cached = utils.get_data()
+        self.assertDictEqual(data, data_cached)
+
     def test_get_data(self):
         """
         Test parsing of CSV file.
@@ -228,7 +242,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             3: [22969, 22999],
             4: [6426],
             5: [],
-            6: []
+            6: [],
         })
 
     def test_group_start_end_weekday(self):
