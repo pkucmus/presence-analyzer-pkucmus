@@ -11,7 +11,7 @@ from json import dumps
 from functools import wraps
 from datetime import datetime
 from lxml import etree
-
+from functools import wraps
 from flask import Response
 
 from presence_analyzer.main import app
@@ -31,6 +31,7 @@ def memorize(key, period):
     if its validity period is not expired
     """
     def _decoration_wrapper(func):
+        @wraps(func)
         def _caching_wrapper(*args, **kwargs):
             cache_key = key
             now = time.time()
@@ -50,6 +51,7 @@ def locker(func):
     """
     Global thread locking decorator.
     """
+    @wraps(func)
     def _lock_wrapper(*args, **kwargs):
         with LOCK:
             ret = func(*args, **kwargs)
