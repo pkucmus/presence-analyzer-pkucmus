@@ -100,13 +100,14 @@ def get_user_data():
         }
         data['server'] = "%(protocol)s://%(host)s:%(port)s" % server
         users = root[1]
-        data['users'] = {
-            int(user.attrib['id']): {
+        data['users'] = [
+            {
+                u'id': int(user.attrib['id']),
                 u'name': unicode(user.findtext('name')),
-                u'avatar': unicode(user.findtext('avatar'))
+                u'avatar': unicode(user.findtext('avatar')),
             }
-            for user in users
-        }
+            for user in sorted(users, key=lambda user: user.findtext('name'))
+        ]
     return data
 
 
