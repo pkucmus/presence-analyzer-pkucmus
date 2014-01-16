@@ -16,6 +16,9 @@
         <div id="loading">
             <img src="/static/img/loading.gif" />
         </div>
+        <div id="error">
+            No data for this user.
+        </div>
     </p>
 </div>
 </%block>
@@ -25,57 +28,70 @@
     google.load("visualization", "1", {packages:["corechart"], 'language': 'pl'});
 </script>
 <script type="text/javascript">
-    function parseInterval(value) {
-        var result = new Date(1,1,1);
-        result.setMilliseconds(value*1000);
-        return result;
-    }
+	function parseInterval(value) {
+		var result = new Date(1, 1, 1);
+		result.setMilliseconds(value * 1000);
+		return result;
+	}
 
-    (function($) {
-        $(document).ready(function(){
-            var loading = $('#loading');
-            var users = [];
-            var image_server_url;
-            $.getJSON("${ url_for('users_api2_view') }", function(result) {
-                var dropdown = $("#user_id");
-                users = result.users;
-                image_server_url = result.server;
-                $.each(users, function(id, user) {
-                    dropdown.append($("<option />").val(id).text(user.name));
-                });
-                dropdown.show();
-                loading.hide();
-            });
-            $('#user_id').change(function(){
-                var selected_user = $("#user_id").val();
-                var chart_div = $('#chart_div');
-                if(selected_user) {
-                    $('img.user_avatar').attr('src', image_server_url+users[selected_user].avatar).show();
-                    loading.show();
-                    chart_div.hide();
-                    $.getJSON("${ url_for('mean_time_weekday_view') }"+selected_user, function(result) {
-                        $.each(result, function(index, value) {
-                            value[1] = parseInterval(value[1]);
-                        });
-                        var data = new google.visualization.DataTable();
-                        data.addColumn('string', 'Weekday');
-                        data.addColumn('datetime', 'Mean time (h:m:s)');
-                        data.addRows(result);
-                        var options = {
-                            hAxis: {title: 'Weekday'}
-                        };
-                        var formatter = new google.visualization.DateFormat({pattern: 'HH:mm:ss'});
-                        formatter.format(data, 1);
+	(function($) {
+		$(document).ready(function() {
+			var loading = $('#loading');
+			var error = $('#error');
+			var users = [];
+			var image_server_url;
+			$.getJSON("${ url_for('users_api2_view') }", function(result) {
+				var dropdown = $("#user_id");
+				users = result.users;
+				image_server_url = result.server;
+				$.each(users, function(id, user) {
+					dropdown.append($("<option />").val(id).text(user.name));
+				});
+				dropdown.show();
+				loading.hide();
+			});
+			$('#user_id').change(function() {
+				var selected_user = $("#user_id").val();
+				var chart_div = $('#chart_div');
+				var user = $.grep(users, function(item){
+				return item.id == selected_user;
+				})[0];
+				if (selected_user) {
+					$('img.user_avatar').attr('src', image_server_url + users[selected_user].avatar).show();
+					loading.show();
+					chart_div.hide();
+					$.getJSON("${ url_for('mean_time_weekday_view') }" + selected_user, function(result) {
+						if (result.length > 0) {
+							error.hide();
+							$.each(result, function(index, value) {
+								value[1] = parseInterval(value[1]);
+							});
+							var data = new google.visualization.DataTable();
+							data.addColumn('string', 'Weekday');
+							data.addColumn('datetime', 'Mean time (h:m:s)');
+							data.addRows(result);
+							var options = {
+								hAxis : {
+									title : 'Weekday'
+								}
+							};
+							var formatter = new google.visualization.DateFormat({
+								pattern : 'HH:mm:ss'
+							});
+							formatter.format(data, 1);
 
-                        
-                        chart_div.show();
-                        loading.hide();
-                        var chart = new google.visualization.ColumnChart(chart_div[0]);
-                        chart.draw(data, options);
-                    });
-                }
-            });
-        });
-    })(jQuery);
+							chart_div.show();
+							loading.hide();
+							var chart = new google.visualization.ColumnChart(chart_div[0]);
+							chart.draw(data, options);
+						} else {
+							error.show();
+							loading.hide();
+						}
+					});
+				}
+			});
+		});
+	})(jQuery); 
 </script>
 </%block>
