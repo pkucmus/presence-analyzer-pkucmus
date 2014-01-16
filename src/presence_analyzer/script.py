@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#pylint: skip-file
 """Startup utilities"""
 import os
 import sys
@@ -47,6 +48,26 @@ def make_shell():
     http = app.test_client()
     reqctx = app.test_request_context
     return locals()
+
+
+# bin/flask-ctl xml
+def make_xml(debug=True):
+    """
+    Download xml user data file from sargo server and
+    save it as data file in runtime/data directory.
+    Config file path is provided from buildout.cfg
+    and depends on --no-debug argument.
+    """
+    import presence_analyzer
+    app = presence_analyzer.app
+    if debug:
+        config = DEBUG_CFG
+    else:
+        config = DEPLOY_CFG
+    app.config.from_pyfile(abspath(config))
+    app.debug = debug
+    presence_analyzer.utils.refresh_xml()
+    print "done"
 
 
 def _init_db(debug=False, dry_run=False):
@@ -98,6 +119,7 @@ def _serve(action, debug=False, dry_run=False):
 # bin/flask-ctl ...
 def run():
     action_shell = werkzeug.script.make_shell(make_shell, make_shell.__doc__)
+    action_xml = make_xml
 
     # bin/flask-ctl serve [fg|start|stop|restart|status|initdb]
     def action_serve(action=('a', 'start'), dry_run=False):

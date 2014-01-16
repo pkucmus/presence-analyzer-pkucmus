@@ -7,11 +7,14 @@ import json
 import datetime
 import unittest
 
-from presence_analyzer import main, views, utils
+from presence_analyzer import main, utils
 
 
 TEST_DATA_CSV = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data.csv'
+)
+TEST_USERS_DATA = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
 
 
@@ -25,7 +28,10 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         """
         Before each test, set up a environment.
         """
-        main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({
+            'DATA_CSV': TEST_DATA_CSV,
+            'USER_DATA_XML': TEST_USERS_DATA,
+        })
         self.client = main.app.test_client()
 
     def tearDown(self):
@@ -77,6 +83,20 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
+
+    def test_new_api_users(self):
+        """
+        Test users xml api listing.
+        """
+        resp = self.client.get('/api/v2/users')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+        data = json.loads(resp.data)['users']
+        self.assertEqual(len(data), 3)
+        self.assertDictEqual(data['141'], {
+            u'name': u'Adam P.',
+            u'avatar': u'/api/images/users/141'
+        })
 
     def test_api_presence_start_end(self):
         """
@@ -146,13 +166,30 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Before each test, set up a environment.
         """
-        main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({
+            'DATA_CSV': TEST_DATA_CSV,
+            'USER_DATA_XML': TEST_USERS_DATA,
+        })
 
     def tearDown(self):
         """
         Get rid of unused objects after each test.
         """
         pass
+
+    def test_get_user_data(self):
+        """
+        Test parsing of user XML file.
+        """
+        data = utils.get_user_data()
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(data.keys(), ['users', 'server'])
+        self.assertItemsEqual(data['users'].keys(), [176, 170, 141])
+        self.assertDictEqual(data['users'][176], {
+            u'name': u'Adrian K.',
+            u'avatar': u'/api/images/users/176'
+        })
+        self.assertEqual(data['server'], u'https://intranet.stxnext.pl:443')
 
     def test_get_data(self):
         """

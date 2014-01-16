@@ -9,12 +9,12 @@ from flask.ext.mako import MakoTemplates, render_template
 from mako.exceptions import TopLevelLookupException
 from presence_analyzer.main import app
 from presence_analyzer.utils import jsonify, get_data, mean, \
-    group_by_weekday, group_by_weekday_start_end
+    group_by_weekday, group_by_weekday_start_end, get_user_data
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable-msg=C0103
 
-mako = MakoTemplates(app)
+MAKO = MakoTemplates(app)
 
 
 def mainpage():
@@ -36,6 +36,15 @@ def templateview(template_name='site_base'):
         return make_response('This page does not exist', 404)
 
 
+@app.route('/api/v2/users', methods=['GET'])
+@jsonify
+def users_api2_view():
+    """
+    Users listing for dropdown new api.
+    """
+    return get_user_data()
+
+
 @app.route('/api/v1/users', methods=['GET'])
 @jsonify
 def users_view():
@@ -44,7 +53,7 @@ def users_view():
     """
     data = get_data()
     return [{'user_id': i, 'name': 'User {0}'.format(str(i))}
-            for i in data.keys()]
+            for i in data]
 
 
 @app.route('/api/v1/presence_start_end/', methods=['GET'])

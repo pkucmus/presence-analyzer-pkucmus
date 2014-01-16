@@ -4,9 +4,11 @@ Helper functions used in views.
 """
 
 import csv
+import urllib2
 from json import dumps
 from functools import wraps
 from datetime import datetime
+from lxml import etree
 
 from flask import Response
 
@@ -25,6 +27,46 @@ def jsonify(function):
         return Response(dumps(function(*args, **kwargs)),
                         mimetype='application/json')
     return inner
+
+
+def refresh_xml():
+    """
+    Download user XML data file from sargo server and save it as
+    current config file.
+    """
+    req = urllib2.urlopen(app.config['XML_URL'])
+    with open(app.config['USER_DATA_XML'], 'wb') as xmlfile:
+        while True:
+            chunk = req.read(16 * 1024)
+            if not chunk:
+                break
+            xmlfile.write(chunk)
+
+
+def get_user_data():
+    """
+    Extracts user data from file specified in config.
+    """
+    data = {}
+    with open(app.config['USER_DATA_XML'], 'r') as xmlfile:
+        tree = etree.parse(xmlfile)
+        root = tree.getroot()
+        config = root[0]
+        server = {
+            u'host': unicode(config.findtext('host')),
+            u'port': unicode(config.findtext('port')),
+            u'protocol': unicode(config.findtext('protocol')),
+        }
+        data['server'] = "%(protocol)s://%(host)s:%(port)s" % server
+        users = root[1]
+        data['users'] = {
+            int(user.attrib['id']): {
+                u'name': unicode(user.findtext('name')),
+                u'avatar': unicode(user.findtext('avatar'))
+            }
+            for user in users
+        }
+    return data
 
 
 def get_data():

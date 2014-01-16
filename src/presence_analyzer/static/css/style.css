@@ -59,3 +59,10 @@ body {
     color: black;
     font-weight: bold;
 }
+
+.user_avatar {
+    background-color: #d5d5d5;
+    padding: 3px;
+    border: 1px solid #333;
+    display: none;
+}
